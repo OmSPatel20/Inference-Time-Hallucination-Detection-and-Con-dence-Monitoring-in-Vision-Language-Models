@@ -1,0 +1,52 @@
+# experiment_config.yaml
+# Configuration tuned for: RTX 4060 (8GB VRAM) + 16GB RAM + i7 14th gen
+#
+# KEY CONSTRAINTS:
+#   - INT4 only (FP16=14GB, INT8=8GB with no headroom, INT4=~5GB)
+#   - Batch size 1 only (no VRAM for batching)
+#   - Attention detector DISABLED (stores full attention tensors = OOM)
+#   - Reduced sample counts (slower single-GPU throughput)
+
+paths:
+  model_id: "llava-hf/llava-1.5-7b-hf"
+  coco_images: "data/coco/val2014"
+  coco_annotations: "data/coco/annotations/instances_val2014.json"
+  pope_dir: "data/pope"
+  output_dir: "outputs"
+  log_dir: "outputs/logs"
+
+model:
+  max_new_tokens: 64           # Reduced from 128 — saves KV cache memory
+  temperature: 1.0
+  do_sample: false
+  num_image_tokens: 576
+
+hardware:
+  vram_gb: 8
+  default_quantization: "int4"
+  max_batch_size: 1
+  enable_attention_detector: false   # Too memory-heavy for 8GB
+  enable_contrastive_detector: true  # 2x inference cost but fits in memory
+  cpu_offload: false                 # Enable if you still OOM
+
+detection:
+  entropy:
+    initial_threshold: 1.5
+    percentile_threshold: 90
+  attention:
+    layers: [-1, -2, -3, -4]        # Fewer layers (only used if force-enabled)
+    min_visual_ratio: 0.15
+  contrastive:
+    noise_sigma: 0.5
+    perturbation_types: ["gaussian", "grayscale", "low_res"]
+    kl_threshold: 0.1
+
+experiment:
+  # INT4 only — FP16/INT8 will OOM on 8GB VRAM
+  quantizations: ["int4"]
+  batch_sizes: [1]
+  pope_splits: ["random", "popular", "adversarial"]
+  num_pope_samples: 1000       # Reduced from 3000 (~1.5h instead of ~4h)
+  num_chair_samples: 200       # Reduced from 500
+  num_drift_samples: 1000      # Reduced from 2000
+  seed: 42
