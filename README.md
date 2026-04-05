@@ -220,7 +220,7 @@ vlm_project/
 ### Step 1: Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/vlm-hallucination-detection.git
+git clone https://github.com/OmSPatel20/vlm-hallucination-detection.git
 cd vlm-hallucination-detection
 ```
 
@@ -463,7 +463,7 @@ If you use this project in your work:
   title        = {Inference-Time Hallucination Detection in Vision-Language Models},
   year         = {2026},
   publisher    = {GitHub},
-  howpublished = {\url{https://github.com/YOUR_USERNAME/vlm-hallucination-detection}},
+  howpublished = {\url{https://github.com/OmSPatel20/vlm-hallucination-detection}},
   note         = {University of Florida, MS in AI Systems}
 }
 ```
